@@ -1,10 +1,14 @@
 import cv2
 import numpy as np
+import os
+import time
 
 def detect_signature(template_path, image_path):
     try:
-        # Charger l'image du modèle de signature et l'image du document
+        # Charger l'image du modèle de signature
         template = cv2.imread(template_path, 0)
+        
+        # Charger l'image du document
         img = cv2.imread(image_path, 0)
         
         if template is None or img is None:
@@ -29,14 +33,32 @@ def detect_signature(template_path, image_path):
 
         # Vérifier si la signature a été détectée
         if loc[0].size > 0:  # Vérifie si des correspondances ont été trouvées
-            print("La signature a été détectée.")
+            print("La signature a été détectée dans", image_path)
         else:
-            print("La signature n'a pas été détectée.")
+            print("La signature n'a pas été détectée dans", image_path)
             
     except Exception as e:
-        print("Une erreur est survenue :", e)
+        print("Une erreur est survenue lors de l'analyse de", image_path, ":", e)
 
-# Exemple d'utilisation
-if __name__ == "__main__":
-    detect_signature(r'C:\Users\rafic\Desktop\tst.jpg', r'C:\Users\rafic\Desktop\tst.jpg')
+# Chemin du dossier contenant les images de signature
+dossier_signatures = r'C:\chemin\vers\votre\dossier\de\signatures'
+
+# Chemin du modèle de signature
+chemin_modele_signature = r'chemin_vers_votre_modele_de_signature.jpg'
+
+# Boucle principale pour analyser en continu les signatures
+while True:
+    # Liste des fichiers d'images dans le dossier
+    fichiers_images = [f for f in os.listdir(dossier_signatures) if f.endswith(('.jpg', '.jpeg', '.png'))]
+
+    # Parcourir chaque fichier d'image
+    for fichier in fichiers_images:
+        # Chemin complet du fichier d'image
+        chemin_image = os.path.join(dossier_signatures, fichier)
+        
+        # Appeler la fonction detect_signature pour analyser la signature
+        detect_signature(chemin_modele_signature, chemin_image)
+    
+    # Attendre 5 secondes avant la prochaine analyse
+    time.sleep(5)
 
